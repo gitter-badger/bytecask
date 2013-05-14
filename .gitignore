@@ -1,5 +1,6 @@
+*~
+.ensime*
 logs
-project/project
 target
 tmp
 .history
@@ -8,5 +9,3 @@ rw_*_db
 .idea_modules
 *.log
 project/boot
-project/target
-project/plugins/target
