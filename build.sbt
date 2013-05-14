@@ -1,4 +1,7 @@
-import AssemblyKeys._
+import sbt._
+import Keys._
+import org.ensime.sbt.util.SExp._
+import org.ensime.sbt.Plugin.Settings.ensimeConfig
 
 organization := "com.github.bytecask"
 
@@ -9,41 +12,66 @@ version := "1.0-SNAPSHOT"
 scalaVersion := "2.10.1"
 
 resolvers ++= Seq(
-  "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
-  "scala-tools" at "http://scala-tools.org/repo-releases",
-  "maven" at "http://repo1.maven.org/maven2",
-  "oracle" at "http://download.oracle.com/maven",
-  "java-net" at "http://download.java.net/maven/2"
+  "maven" at "http://repo1.maven.org/maven2"
 )
 
 libraryDependencies ++= Seq(
-  "ch.qos.logback" % "logback-classic" % "0.9.30" % "compile",
+  "org.slf4j" % "slf4j-api" % "1.7.5",
+  "org.slf4j" % "slf4j-simple" % "1.7.5" % "runtime",
   "org.xerial.snappy" % "snappy-java" % "1.1.0-M3",
-  "org.scalatest" % "scalatest_2.10.0-RC3"  % "1.8-B1"  % "test"
+  "org.scalatest" %% "scalatest"  % "1.9.1"  % "test"
 )
 
 scalacOptions ++= Seq(
-  "-deprecation",
-  "-Xmigration",
-  "-Xcheckinit",
+  "-feature",
+  "-language:implicitConversions",
+  "-language:postfixOps",
+  "-language:reflectiveCalls",
   "-Yinline-warnings",
+  "-deprecation",
   "-optimise",
   "-encoding", "utf8"
 )
 
 javacOptions ++= Seq("-source", "1.7")
 
-publishTo <<= (version) { version: String =>
-  val nexus = "https://oss.sonatype.org/content/repositories/"
-  if (version.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "snapshots/")
-  else
-    Some("releases"  at nexus + "releases/")
-}
+fork in run := true
 
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+javaOptions in run += "-Droot-level=OFF -server -XX:+TieredCompilation -XX:+AggressiveOpts"
 
-seq(assemblySettings: _*)
+// publishTo <<= (version) { version: String =>
+//   val nexus = "https://oss.sonatype.org/content/repositories/"
+//   if (version.trim.endsWith("SNAPSHOT"))
+//     Some("snapshots" at nexus + "snapshots/")
+//   else
+//     Some("releases"  at nexus + "releases/")
+// }
 
-test in assembly := {}
+// credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
+// buildinfo includes just that, build info, in a generated class in the delivered artifact
+buildInfoSettings
+
+sourceGenerators in Compile <+= buildInfo
+
+buildInfoKeys := Seq[BuildInfoKey](
+  name,
+  version,
+  scalaVersion,
+  libraryDependencies in Compile
+)
+
+buildInfoPackage := "com.github.bytecask"
+
+// release configuration
+releaseSettings
+
+ensimeConfig := sexp(
+  key(":formatting-prefs"), sexp(
+    key(":alignParameters"), true,
+    key(":alignSingleLineCaseStatements"), true,
+    key(":rewriteArrowSymbols"), true,
+    key(":compactStringConcatenation"), true,
+    key(":indentWithTabs"), false
+  )
+)
