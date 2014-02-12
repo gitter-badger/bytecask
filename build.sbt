@@ -9,7 +9,7 @@ name := "bytecask"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.3"
 
 resolvers ++= Seq(
   "maven" at "http://repo1.maven.org/maven2"
@@ -17,7 +17,7 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % "1.7.5",
-  "org.slf4j" % "slf4j-simple" % "1.7.5" % "runtime",
+  "org.slf4j" % "slf4j-simple" % "1.7.5", 
   "org.xerial.snappy" % "snappy-java" % "1.1.0-M3",
   "org.scalatest" %% "scalatest"  % "1.9.1"  % "test"
 )
@@ -43,15 +43,16 @@ fork in run := true
 
 javaOptions in run += "-Droot-level=OFF -server -XX:+TieredCompilation -XX:+AggressiveOpts"
 
-// publishTo <<= (version) { version: String =>
-//   val nexus = "https://oss.sonatype.org/content/repositories/"
-//   if (version.trim.endsWith("SNAPSHOT"))
-//     Some("snapshots" at nexus + "snapshots/")
-//   else
-//     Some("releases"  at nexus + "releases/")
-// }
+publishTo <<= (version) { version: String =>
+//  val nexus = "https://oss.sonatype.org/content/repositories/"
+  val nexus = "http://f1tst-linbld100/nexus/content/repositories/"
+  if (version.trim.endsWith("SNAPSHOT"))
+    Some("snapshots" at nexus + "snapshots/")
+  else
+    Some("releases"  at nexus + "releases/")
+}
 
-// credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 // buildinfo includes just that, build info, in a generated class in the delivered artifact
 buildInfoSettings
