@@ -1,25 +1,17 @@
 import sbt._
 import Keys._
-import org.ensime.sbt.util.SExp._
-import org.ensime.sbt.Plugin.Settings.ensimeConfig
 
 organization := "com.github.bytecask"
 
 name := "bytecask"
 
-version := "1.0-SNAPSHOT"
-
-scalaVersion := "2.10.3"
-
-resolvers ++= Seq(
-  "maven" at "http://repo1.maven.org/maven2"
-)
+scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.5",
-  "org.slf4j" % "slf4j-simple" % "1.7.5", 
-  "org.xerial.snappy" % "snappy-java" % "1.1.0-M3",
-  "org.scalatest" %% "scalatest"  % "1.9.1"  % "test"
+  "org.slf4j" % "slf4j-api" % "1.7.7",
+  "org.slf4j" % "slf4j-simple" % "1.7.7", 
+  "org.xerial.snappy" % "snappy-java" % "1.1.1.6",
+  "org.scalatest" %% "scalatest"  % "2.2.2"  % "test"
 )
 
 scalacOptions ++= Seq(
@@ -38,10 +30,6 @@ fork in run := true
 javaOptions in run += "-Droot-level=OFF -XX:+TieredCompilation -XX:+AggressiveOpts -server -Xmx512M -Xss2M"
 
 javacOptions ++= Seq("-source", "1.7")
-
-fork in run := true
-
-javaOptions in run += "-Droot-level=OFF -server -XX:+TieredCompilation -XX:+AggressiveOpts"
 
 publishTo <<= (version) { version: String =>
 //  val nexus = "https://oss.sonatype.org/content/repositories/"
@@ -70,13 +58,3 @@ buildInfoPackage := "com.github.bytecask"
 
 // release configuration
 releaseSettings
-
-ensimeConfig := sexp(
-  key(":formatting-prefs"), sexp(
-    key(":alignParameters"), true,
-    key(":alignSingleLineCaseStatements"), true,
-    key(":rewriteArrowSymbols"), true,
-    key(":compactStringConcatenation"), true,
-    key(":indentWithTabs"), false
-  )
-)
