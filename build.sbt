@@ -1,7 +1,7 @@
 import sbt._
 import Keys._
 
-organization := "com.github.bytecask"
+organization := "net.crispywalrus.bytecask"
 
 name := "bytecask"
 
@@ -31,17 +31,6 @@ javaOptions in run += "-Droot-level=OFF -XX:+TieredCompilation -XX:+AggressiveOp
 
 javacOptions ++= Seq("-source", "1.7")
 
-publishTo <<= (version) { version: String =>
-//  val nexus = "https://oss.sonatype.org/content/repositories/"
-  val nexus = "http://f1tst-linbld100/nexus/content/repositories/"
-  if (version.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "snapshots/")
-  else
-    Some("releases"  at nexus + "releases/")
-}
-
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
-
 // buildinfo includes just that, build info, in a generated class in the delivered artifact
 buildInfoSettings
 
@@ -54,7 +43,7 @@ buildInfoKeys := Seq[BuildInfoKey](
   libraryDependencies in Compile
 )
 
-buildInfoPackage := "com.github.bytecask"
+buildInfoPackage := "net.crispywalrus.bytecask"
 
 // release configuration
 releaseSettings
