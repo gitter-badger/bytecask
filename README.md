@@ -25,13 +25,7 @@
 
 **sbt**
 
-Dependencies:
-
-    "com.github.bytecask" %% "bytecask" % "1.0-SNAPSHOT"
-
-Repos:
-
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/groups/public"
+Currently this library is not published.
 
 ### Example ###
 
