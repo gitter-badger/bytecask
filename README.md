@@ -25,7 +25,7 @@
 
 **sbt**
 
-Currently this library is not published.
+````libraryDependencies += "net.crispywalrus.bytecask" %% "bytecask" % $VERSION````
 
 ### Example ###
 
@@ -199,8 +199,10 @@ You can use github issue tracker to report bugs or to ask for new features [here
 
 **Submit patches**
 
-Patches are gladly welcome from their original author. Along with any patches, please state that the patch is your original work
-and that you license the work to the Bytecask project under the Apache 2.0 or a compatible license.
+Patches are gladly welcome from their original author. Along with any
+patches, please state that the patch is your original work and that
+you license the work to the Bytecask project under the GPL 3.0 or a
+compatible license.
 
 To propose a patch, fork the project and send a pull request via github.
 
