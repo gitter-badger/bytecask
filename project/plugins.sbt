@@ -1,8 +1,6 @@
+resolvers += Resolver.bintrayRepo("sbt", "sbt-plugin-releases")
 
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "0.8.5")
+addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.2")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.2")
-
-
-
 
