@@ -2,46 +2,47 @@ organization := "net.crispywalrus.bytecask"
 
 name := "bytecask"
 
-licenses += ("GPL-3.0", url("http://www.gnu.org/copyleft/gpl.html"))
+licenses += ("ASL-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.10",
-  "org.xerial.snappy" % "snappy-java" % "1.1.1.6",
-  "org.slf4j" % "slf4j-simple" % "1.7.10" % Test,
-  "org.scalatest" %% "scalatest"  % "2.2.4"  % Test
+  "org.slf4j" % "slf4j-api" % slf4jVer,
+  "org.xerial.snappy" % "snappy-java" % "1.1.2.4",
+  "org.slf4j" % "slf4j-simple" % slf4jVer % Test,
+  "org.scalatest" %% "scalatest"  % "2.2.6"  % Test
 )
 
+val slf4jVer = "1.7.21"
+
 scalacOptions ++= Seq(
+  "-encoding", "utf8",
   "-feature",
-  "-language:implicitConversions",
-  "-language:postfixOps",
-  "-language:reflectiveCalls",
-  "-Yinline-warnings",
+  "-language:_",
   "-deprecation",
   "-optimise",
-  "-encoding", "utf8"
+  "-Yinline-warnings",
+  "-Ybackend:GenBCode",
+  "-Ydelambdafy:method",
+  "-target:jvm-1.8",
+  "-Yopt:l:classpath"
 )
 
 fork in run := true
 
 javaOptions in run += "-Droot-level=OFF -XX:+TieredCompilation -XX:+AggressiveOpts -server -Xmx512M -Xss2M"
 
-javacOptions ++= Seq("-source", "1.7")
-
-// buildinfo includes just that, build info, in a generated class in the delivered artifact
-buildInfoSettings
-
-sourceGenerators in Compile <+= buildInfo
-
 buildInfoKeys := Seq[BuildInfoKey](
+  organization,
   name,
   version,
   scalaVersion,
-  libraryDependencies in Compile
-)
-
-buildInfoPackage := "net.crispywalrus.bytecask"
-
-seq(bintraySettings:_*)
+  libraryDependencies in Compile,
+  BuildInfoKey.action("gitVersion") {
+    git.formattedShaVersion.?.value.
+      getOrElse(Some("Unknown")).
+      getOrElse("Unknown")+"@"+
+    git.formattedDateVersion.?.value.getOrElse("")
+  })
+ 
+buildInfoPackage := "flyingwalrus.bytecask"

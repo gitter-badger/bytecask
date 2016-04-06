@@ -1,0 +1,62 @@
+package flyingwalrus.bytecask
+
+import java.io.{OutputStream, InputStream}
+import Bytes._
+import java.nio.ByteBuffer
+
+trait BlobStore {
+  val bytecask: Bytecask
+
+  val blockSize: Int
+
+  def storeBlob(name: String, is: InputStream) = {
+    val buffer = new Array[Byte](blockSize)
+    var blocks = 0
+    var totalRead = 0L
+    var read = is.read(buffer, 0, blockSize)
+    while (read > 0) {
+      bytecask.put(key(name, blocks), buffer.slice(0, read))
+      blocks = blocks + 1
+      totalRead = totalRead + read
+      read = is.read(buffer, 0, blockSize)
+    }
+    storeDescriptor(name, blocks, totalRead)
+    totalRead
+  }
+
+  def retrieveBlob(name: String, os: OutputStream) {
+    bytecask.get(key(name)) match {
+      case Some(descriptor) =>
+        val buffer = ByteBuffer.wrap(descriptor)
+        val blocks = buffer.getInt
+        val length = buffer.getLong
+        for (i <- 0 to blocks - 1) {
+          bytecask.get(key(name, i)) match {
+            case Some(buf) => os.write(buf)
+            case _ => throw new IllegalStateException(s"Couldn't retrieve blob's block #$i")
+          }
+        }
+      case _ => throw new IllegalArgumentException(s"Blob not found: $name")
+    }
+  }
+
+  def getBlobMetadata(name: String) = bytecask.get(key(name)) match {
+    case Some(descriptor) =>
+      val buffer = ByteBuffer.wrap(descriptor)
+      val blocks = buffer.getInt
+      val length = buffer.getLong
+      BlobMeta(name, length, blocks)
+    case _ => throw new IllegalArgumentException(s"Blob not found: $name")
+  }
+
+  private def key(name: String) = "file://" + name
+
+  private def key(name: String, i: Int): String = key(name) + "_" + i
+
+  private def storeDescriptor(name: String, blocks: Int, length: Long) {
+    val value = ByteBuffer.allocate(12).putInt(blocks).putLong(length).array()
+    bytecask.put(key(name), value)
+  }
+}
+
+case class BlobMeta(name: String, length: Long, blocks: Int)

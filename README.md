@@ -189,7 +189,7 @@ and issue:
 
 or from within sbt:
 
-    run-main com.github.bytecask.Benchmark
+    run-main flyingwalrus.bytecask.Benchmark
 
 ### Collaboration ###
 
@@ -201,8 +201,7 @@ You can use github issue tracker to report bugs or to ask for new features [here
 
 Patches are gladly welcome from their original author. Along with any
 patches, please state that the patch is your original work and that
-you license the work to the Bytecask project under the GPL 3.0 or a
-compatible license.
+you license the work to the Bytecask project under the ASL 2.0 license
 
 To propose a patch, fork the project and send a pull request via github.
 
